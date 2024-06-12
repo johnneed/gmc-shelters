@@ -9,7 +9,9 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint --ext .ts,.tsx .",
+    "package-windows": "rm -rf build && rm -rf dist && npm run build && electron-builder -w -c.extraMetadata.main=build/electron.js",
+    "rebuild": "electron-rebuild -f -w better-sqlite3"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
@@ -44,8 +46,28 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@types/better-sqlite3": "^7.6.10",
+    "better-sqlite3": "^11.0.0",
     "electron-squirrel-startup": "^1.0.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
+  },
+  "build": {
+    "appId": "shelters.gmcburlington.org",
+    "productName": "GMC Shelters",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "public/**/*"
+    ],
+    "directories": {
+      "buildResources": "public"
+    },
+    "extraResources": [
+      "./database/gmc_shelters.sqlite"
+    ]
+  },
+  "preload": {
+    "js": "./src/preload.ts"
   }
 }
