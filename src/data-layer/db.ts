@@ -5,11 +5,11 @@ import path from "path";
 
 const dbPath =
   process.env.NODE_ENV === "development"
-    ? "./demo_table.db"
+    ? "./gmc_shelters.sqlite"
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    : path.join(process.resourcesPath, "./demo_table.db")
-
+    : path.join(process.resourcesPath, "./gmc_shelters.sqlite")
+console.log('DB PATH', dbPath);
 const db = new Database(dbPath)
 db.pragma("journal_mode = WAL")
 
