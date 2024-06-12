@@ -11,8 +11,9 @@ const getNowString = ()=>  `${ new Date().getFullYear() }-${ withLeadingZero(new
 
 const readShelters = () => {
   try {
-    const query = `SELECT * FROM shelters`;
+    const query = "SELECT * FROM shelters";
     const readQuery = db.prepare(query);
+    console.log(readQuery.all());
     return readQuery.all();
   } catch (err) {
     console.error(err);

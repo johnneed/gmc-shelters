@@ -2,10 +2,13 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 import { contextBridge, ipcRenderer } from "electron";
 
-
-contextBridge.exposeInMainWorld("api", {
-  "foobar": () => {
-    console.log("FOOBAR");
-  },
-  "doThings": (arg: string) => ipcRenderer.send("do-a-thing", arg)
-});
+const  validChannels = ["READ_SHELTERS"];
+contextBridge.exposeInMainWorld(
+  "api", {
+    invoke: (channel:string, data:any) => {
+      if (validChannels.includes(channel)) {
+        return ipcRenderer.invoke(channel, data);
+      }
+    },
+  }
+);
