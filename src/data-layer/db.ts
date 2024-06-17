@@ -5,7 +5,7 @@ import path from "path";
 
 const dbPath =
   process.env.NODE_ENV === "development"
-    ? "./database/gmc_shelters.sqlite"
+    ? "../database/gmc_shelters.sqlite"
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     : path.join(process.resourcesPath, "./database/gmc_shelters.sqlite")
