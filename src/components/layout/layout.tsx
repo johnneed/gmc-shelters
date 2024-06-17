@@ -1,37 +1,34 @@
-import React from "react";
+import React, {useState} from "react";
 import "./styles.css"; // You can create your own CSS file for styling
+import {TopAppBar} from "../top-app-bar";
+import {SearchResultsDrawer} from "../search-results-drawer";
 
 interface LayoutProps {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
-  return (
-    <div className="app-container">
-      <header className="top-menu">
-        {/* Top menu content */}
-        <nav>
-          <ul>
-            <li>Home</li>
-            <li>About</li>
-            <li>Contact</li>
-          </ul>
-        </nav>
-      </header>
-      <aside className="sidebar">
-        {/* Sidebar content */}
-        <ul>
-          <li>Dashboard</li>
-          <li>Profile</li>
-          <li>Settings</li>
-        </ul>
-      </aside>
-      <main className="main-window">
-        {/* Main content */}
-        {children}
-      </main>
-    </div>
-  );
+const Layout: React.FC<LayoutProps> = ({children}) => {
+    const [isSearchBoxOpen, setIsSearchBoxOpen] = useState(false);
+    const toggleSearchBox = (open: boolean) => () => {
+        if (open !== isSearchBoxOpen) {
+            setIsSearchBoxOpen(open);
+        }
+    }
+
+    return (
+        <div className="app-container">
+            <TopAppBar onMenuClick={() => {
+                setIsSearchBoxOpen(true);
+            }}/>
+            <div className="main-container">
+                <SearchResultsDrawer toggleDrawer={toggleSearchBox} isOpen={isSearchBoxOpen} searchResults={[]}/>
+                <main className="main-window">
+                    {children}
+                </main>
+            </div>
+        </div>
+    )
+        ;
 };
 
 export default Layout;

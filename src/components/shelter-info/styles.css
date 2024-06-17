@@ -1,0 +1,7 @@
+.shelter-info_block{
+    margin: 1rem;
+    padding: 1rem;
+}
+.shelter-info_block.is_selected {
+    backdrop-filter: sepia(90%);;
+}

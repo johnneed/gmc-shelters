@@ -2,7 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 import { contextBridge, ipcRenderer } from "electron";
 
-const  validChannels = ["READ_SHELTERS"];
+const  validChannels = ["READ_SHELTERS", "OPEN_IN_DEFAULT_BROWSER"]
 contextBridge.exposeInMainWorld(
   "api", {
     invoke: (channel:string, data:any) => {

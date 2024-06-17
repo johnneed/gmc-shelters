@@ -1,5 +1,4 @@
 import db from "./db";
-import { Shelter } from "../models/shelter-factory";
 
 const withLeadingZero = (num: number): string => {
   const numStr = `0${ String(num) }`;

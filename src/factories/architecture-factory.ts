@@ -1,10 +1,4 @@
-import { makeNumber, makeString } from "./model-helpers";
-
-type Architecture = {
-  id?: number;
-  name?: string;
-  description?: string;
-}
+import { makeNumber, makeString } from "./factory-helpers";
 
 const architectureFactory = (architecture?: Architecture | null): Architecture => {
 
@@ -20,4 +14,4 @@ const architectureFactory = (architecture?: Architecture | null): Architecture =
 
 
 export default architectureFactory;
-export { Architecture };
+
