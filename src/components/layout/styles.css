@@ -1,3 +1,7 @@
+.app-container{
+    background-color: #EEEEEE;
+}
+
 .top-menu{
     display: flex;
     justify-content: space-between;

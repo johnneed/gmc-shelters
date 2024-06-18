@@ -1,7 +1,16 @@
+html {
+  background-color: #EEEEEE;
+}
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
   margin: auto;
   width: 100vw;
   padding: 2rem;
+  background-color: #EEEEEE;
+}
+
+
+#root{
+  background-color: #EEEEEE;
 }

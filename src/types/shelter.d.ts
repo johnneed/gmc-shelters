@@ -16,5 +16,8 @@ type Shelter = {
     notes?: string;
     photos?: Photo[]
     aka?: AKA[]
+    isExtant?: boolean;
+    created?: string;
+    updated?: string;
 }
 

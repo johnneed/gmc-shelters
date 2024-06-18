@@ -25,6 +25,9 @@ const shelterFactory = (shelter?: any): Shelter => {
         notes: makeString(shelter.notes),
         photos: Array.isArray(shelter.photos) ? (shelter.photos.map((p: any) => photoFactory(p))) : [],
         aka: Array.isArray(shelter.aka) ? (shelter.aka.map((a: any) => akaFactory(a))) : [],
+        isExtant: makeBool(shelter.isExtant || shelter.is_extant),
+        created: makeString(shelter.created),
+        updated: makeString(shelter.updated),
     }
 }
 

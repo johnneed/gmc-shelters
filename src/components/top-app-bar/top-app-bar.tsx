@@ -32,10 +32,6 @@ const navItems = [{text: "Shelters", link: "/"}, {text: "Map", link: "/map"}, {t
 
 export default function TopAppBar(props: Props) {
     const navigate = useNavigate();
-    const location = useLocation();
-    const {window} = props;
-
-    const container = window !== undefined ? () => window().document.body : undefined;
 
     const Search = styled("div")(({theme}) => ({
         flexGrow: 1,
