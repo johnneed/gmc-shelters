@@ -1,6 +1,6 @@
 import React, {Fragment} from "react";
 import "./styles.css";
-import {Card, Box, Chip, TextField, Typography, Stack, Paper} from "@mui/material";
+import {Card, Box, Chip, TextField, Tooltip, Typography, Stack, Paper} from "@mui/material";
 import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Unstable_Grid2"; // Grid version 2
 
@@ -38,14 +38,17 @@ const ShelterInfo: React.FC<ShelterInfoProps> = ({shelter, isSelected = false, i
                 <Box>
                     <Box display={"flex"} justifyContent={"space-between"}>
                         <Typography variant={"h4"} component={"h4"}>{shelter.name}</Typography>
-
-                        <Box display={"flex"} justifyContent={"flex-start"}>
-                            <Typography
-                                onClick={openLink(`https://gmcburlington.org/${shelter.slug}/`)}
-                                display={"inline-block"}
-                                sx={{marginRight: "1rem"}}
-                            >{shelter.slug}
-                            </Typography>
+                        <Box  display={"flex"} justifyContent={"flex-start"}>
+                            <Paper variant={"outlined"} sx={{padding: "0.5rem"}}>
+                                <Tooltip title="View Web Artcle">
+                                    <Typography
+                                        onClick={openLink(`https://gmcburlington.org/${shelter.slug}/`)}
+                                        display={"inline-block"}
+                                        sx={{marginRight: "1rem"}}
+                                    >{shelter.slug}
+                                    </Typography>
+                                </Tooltip>
+                            </Paper>
                         </Box>
                     </Box>
                     <br/>
@@ -80,10 +83,11 @@ const ShelterInfo: React.FC<ShelterInfoProps> = ({shelter, isSelected = false, i
                                     </Grid>
                                     <Grid xs={12}>
                                         <Paper sx={{padding: "0.5rem"}} variant="outlined">
-                                            <Typography variant={"h6"} component={"h6"}>Architect/Engineer: {shelter.builtBy || "Unknown"}</Typography>
+                                            <Typography variant={"h6"}
+                                                        component={"h6"}>Architect/Engineer: {shelter.builtBy || "Unknown"}</Typography>
                                         </Paper>
                                     </Grid>
-                                    <Grid xs={4}>
+                                    <Grid xs={3}>
                                         <Paper sx={{padding: "0.5rem"}} variant="outlined">
                                             <Stack>
                                                 <Typography
@@ -111,9 +115,9 @@ const ShelterInfo: React.FC<ShelterInfoProps> = ({shelter, isSelected = false, i
                                             </Stack>
                                         </Paper>
                                     </Grid>
-                                    <Grid xs={4}>
+                                    <Grid xs={5}>
                                         <Paper sx={{padding: "0.5rem"}} variant="outlined">
-                                            <Typography component={"p"} sx={{fontWeight: '500'}}>AKAs</Typography>
+                                            <Typography component={"p"} sx={{fontWeight: "500"}}>AKAs</Typography>
                                             {
                                                 shelter.aka.map((aka) => (
                                                     <Typography key={aka.id} component={"p"}>{aka.name}</Typography>
