@@ -83,3 +83,45 @@ ipcMain.handle("OPEN_IN_DEFAULT_BROWSER", (event, url: string) => {
     }
   });
 });
+
+ipcMain.handle("UPDATE_SHELTER", (event, shelter: Shelter) => {
+  return new Promise(function(resolve, reject) {
+    try {
+      if (!shelter.id) {
+        reject("shelter must have an ID");
+      }
+      const myShelter = dbAPI.updateShelter(shelter);
+      console.log("UPDATING SHELTER:", JSON.stringify(shelter));
+      resolve(myShelter);
+    } catch(err){
+      console.log(err);
+      reject("this didn't work!");
+    }
+  });
+});
+
+ipcMain.handle("CREATE_SHELTER", (event, shelter: Shelter) => {
+  return new Promise(function(resolve, reject) {
+    try {
+      const myShelter = dbAPI.insertShelter(shelter);
+      console.log("UPDATING SHELTER:", JSON.stringify(shelter));
+      resolve(myShelter);
+    } catch(err){
+      console.log(err);
+      reject("this didn't work!");
+    }
+  });
+});
+
+ipcMain.handle("DELEte_SHELTER", (event, shelter: Shelter) => {
+  return new Promise(function(resolve, reject) {
+    try {
+      const myResults = dbAPI.deleteShelter(shelter);
+      console.log("DELETING SHELTER:", JSON.stringify(shelter));
+      resolve(myResults);
+    } catch(err){
+      console.log(err);
+      reject("this didn't work!");
+    }
+  });
+});

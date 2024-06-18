@@ -7,11 +7,19 @@ const withLeadingZero = (num: number): string => {
 
 const getNowString = () => `${new Date().getFullYear()}-${withLeadingZero(new Date().getMonth() + 1)}-${withLeadingZero(new Date().getDate())} ${withLeadingZero(new Date().getHours())}:${withLeadingZero(new Date().getMinutes())}:${withLeadingZero(new Date().getSeconds())}`;
 
-const bool2Int = (bool?: boolean): number | string =>{
+const bool2Int = (bool?: boolean): number | string => {
     if (bool === undefined) {
         return "null";
     }
     return bool ? 1 : 0;
+}
+
+const stringOrNull = (str?: string): string | null => {
+    return str && str.trim() !== "" ? `'${str}'` : null;
+}
+
+const numberOrNull = (num?: number): number | null => {
+    return typeof num === "number" ? num : null;
 }
 
 const readShelters = () => {
@@ -50,24 +58,30 @@ const insertShelter = (shelter: Shelter) => {
 
 const updateShelter = (shelter: Shelter) => {
     try {
+        // Sanity Check
+        if (!shelter.id) {
+            return;
+        }
         const now = getNowString();
-        const insertQuery = db.prepare(
-            `UPDATE SHELTERS SET name = '${shelter.name}', ` +
-                    `start_year = ${shelter.startYear}, ` +
-                    `end_year = ${shelter.endYear},` +
-                    `description = '${shelter.description}', ` +
-                    `slug = '${shelter.description}', ` +
-                    `longitude = '${shelter.longitude}', ` +
-                    `latitude = '${shelter.latitude}', ` +
-                    `altitude = '${shelter.altitude}', ` +
-                    `default_photo_id = '${shelter.defaultPhotoId}', ` +
-                    `is_gmc = '${shelter.isGMC}', ` +
-                    `architecture = '${shelter.architecture}', ` +
-                    `built_by = '${shelter.builtBy}', ` +
-                    `notes = '${shelter.notes}', ` +
-                    `updated = '${now}' ` +
-                    `WHERE id = ${shelter.id}`
-        );
+
+        const queryString = `UPDATE SHELTERS SET name = ${stringOrNull(shelter.name)}, ` +
+            `start_year =  ${numberOrNull(shelter.startYear)}, ` +
+            `end_year = ${numberOrNull(shelter.endYear)},` +
+            `description = ${stringOrNull(shelter.description)}, ` +
+            `slug = ${stringOrNull(shelter.slug)}, ` +
+            `longitude = ${numberOrNull(shelter.longitude)}, ` +
+            `latitude = ${numberOrNull(shelter.latitude)}, ` +
+            `altitude = ${numberOrNull(shelter.altitude)}, ` +
+            `default_photo_id = ${numberOrNull(shelter.defaultPhotoId)}, ` +
+            `is_gmc = ${bool2Int(shelter.isGMC)}, ` +
+            `architecture = ${stringOrNull(shelter.architecture)}, ` +
+            `built_by = ${stringOrNull(shelter.builtBy)}, ` +
+            `notes = ${stringOrNull(shelter.notes)}, ` +
+            `is_extant = ${bool2Int(shelter.isExtant)}, ` +
+            `updated = '${now}' ` +
+            `WHERE id = ${shelter.id}`;
+        console.log(queryString);
+        const insertQuery = db.prepare(queryString);
 
         const transaction = db.transaction(() => {
             const info = insertQuery.run()
@@ -108,6 +122,13 @@ const deleteShelter = (shelter: Shelter) => {
         throw err
     }
 }
+
+
+
+
+
+
+
 
 const dbAPI = {readShelters, insertShelter, deleteShelter, updateShelter};
 export default dbAPI

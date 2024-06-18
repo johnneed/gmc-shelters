@@ -2,9 +2,21 @@ import React, {useState, useEffect} from "react";
 import "./styles.css";
 import ShelterFactory from "../../factories/shelter-factory";
 import ShelterInfo from "../../components/shelter-info/shelter-info";
-import {Typography} from "@mui/material";
+import {Typography, Button} from "@mui/material";
 import {ErrorMessage} from "../../components/error-message";
 import Box from "@mui/material/Box";
+
+
+const updateShelter = (shelter: Shelter) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    window.api.invoke("UPDATE_SHELTER", shelter).then(function (res: Shelter) {
+        console.log(res, JSON.stringify(res, null, 2));
+    })
+        .catch(function (err: Error) {
+            console.error(err); // will print "This didn't work!" to the browser console.
+        });
+}
 
 
 const MainPage: React.FC = () => {
@@ -46,7 +58,7 @@ const MainPage: React.FC = () => {
                     ))}
                 </div>
             ) : (
-                <Typography variant={"h1"} component={"h1"}>Loading data...</Typography>
+                <Typography variant={"h6"} component={"h6"}>Loading data...</Typography>
             )}
         </Box>
     );
