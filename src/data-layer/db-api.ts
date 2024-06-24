@@ -24,9 +24,8 @@ const numberOrNull = (num?: number): number | null => {
 
 const readShelters = () => {
     try {
-        const query = "SELECT * FROM shelters";
+        const query = "SELECT * FROM view_shelters_akas";
         const readQuery = db.prepare(query);
-        console.log(readQuery.all());
         return readQuery.all();
     } catch (err) {
         console.error(err);
@@ -54,7 +53,6 @@ const insertShelter = (shelter: Shelter) => {
         throw err
     }
 }
-
 
 const updateShelter = (shelter: Shelter) => {
     try {
@@ -85,10 +83,6 @@ const updateShelter = (shelter: Shelter) => {
 
         const transaction = db.transaction(() => {
             const info = insertQuery.run()
-            console.log(
-                `Inserted ${info.changes} rows with last ID
-                 ${info.lastInsertRowid} into person`
-            )
         })
         transaction()
     } catch (err) {
@@ -96,7 +90,6 @@ const updateShelter = (shelter: Shelter) => {
         throw err
     }
 }
-
 
 const deleteShelter = (shelter: Shelter) => {
     try {
@@ -111,10 +104,6 @@ const deleteShelter = (shelter: Shelter) => {
 
         const transaction = db.transaction(() => {
             const info = deleteQuery.run()
-            console.log(
-                `Inserted ${info.changes} rows with last ID
-                 ${info.lastInsertRowid} into person`
-            )
         })
         transaction()
     } catch (err) {
@@ -126,9 +115,94 @@ const deleteShelter = (shelter: Shelter) => {
 
 
 
+const readCategories = () => {
+    try {
+        const query = "SELECT * FROM categories";
+        const readQuery = db.prepare(query);
+        return readQuery.all();
+    } catch (err) {
+        console.error(err);
+        throw err
+    }
+}
 
 
 
+const readArchitectures = () => {
+    try {
+        const query = "SELECT * FROM architectures";
+        const readQuery = db.prepare(query);
+        return readQuery.all();
+    } catch (err) {
+        console.error(err);
+        throw err
+    }
+}
 
-const dbAPI = {readShelters, insertShelter, deleteShelter, updateShelter};
+
+const addAKA = (aka:AKA) => {
+    try {
+        const insertQuery = db.prepare(
+            `INSERT INTO shelter_akas (shelter_id, notes, name, created, updated) VALUES (${aka.shelterId}, ${aka.notes || "null"}, ${aka.name || "null"},${getNowString()}, ${getNowString()})`
+        )
+
+        const transaction = db.transaction(() => {
+            const info = insertQuery.run()
+            console.log(
+                `Inserted ${info.changes} rows with last ID
+                 ${info.lastInsertRowid} into person`
+            )
+        })
+        transaction()
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+
+}
+
+const removeAKA = (akaId: number) => {
+    try {
+        const insertQuery = db.prepare(
+            `DELETE FROM shelter_akas WHERE id = ${akaId}`
+        )
+
+        const transaction = db.transaction(() => {
+            const info = insertQuery.run()
+            console.log(
+                `Inserted ${info.changes} rows with last ID
+                 ${info.lastInsertRowid} into person`
+            )
+        })
+        transaction()
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+
+}
+
+
+const updateAKA = (aka: AKA) => {
+    try {
+        const insertQuery = db.prepare(
+            `UPDATE shelter_akas SET name = ${aka.name}, notes = ${aka.notes}, updated = ${getNowString()} WHERE id = ${aka.id}`
+        )
+
+        const transaction = db.transaction(() => {
+            const info = insertQuery.run()
+            console.log(
+                `Inserted ${info.changes} rows with last ID
+                 ${info.lastInsertRowid} into person`
+            )
+        })
+        transaction()
+    } catch (err) {
+        console.error(err)
+        throw err
+    }
+
+}
+
+const dbAPI = {readShelters, insertShelter, deleteShelter, updateShelter, readCategories, readArchitectures, addAKA, removeAKA, updateAKA};
 export default dbAPI

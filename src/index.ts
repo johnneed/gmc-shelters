@@ -3,31 +3,32 @@ import {app, BrowserWindow, ipcMain, shell} from "electron";
 // plugin that tells the Electron app where to look for the Webpack-bundled app code (depending on
 // whether you're running in development or production).
 import dbAPI from "./data-layer/db-api";
+import {akaFactory} from "./factories";
+
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 
-
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
-  app.quit();
+    app.quit();
 }
 
 const createWindow = (): void => {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
-    webPreferences: {
-      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-    },
-  });
+    // Create the browser window.
+    const mainWindow = new BrowserWindow({
+        height: 600,
+        width: 800,
+        webPreferences: {
+            preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+        },
+    });
 
-  // and load the index.html of the app.
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+    // and load the index.html of the app.
+    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
@@ -39,17 +40,17 @@ app.on("ready", createWindow);
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+    if (process.platform !== "darwin") {
+        app.quit();
+    }
 });
 
 app.on("activate", () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
+    // On OS X it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) {
+        createWindow();
+    }
 });
 
 
@@ -57,71 +58,180 @@ app.on("activate", () => {
 // code. You can also put them in separate files and import them here.
 
 
+const reduceShelters = (shelters: any) => {
+    return Object.values(
+        shelters
+            .reduce((acc: any, row: any) => ({
+                ...acc,
+                [row.id.toString()]: {
+                    name: row.name,
+                    startYear: row.start_year,
+                    endYear: row.end_year,
+                    description: row.description,
+                    slug: row.slug,
+                    longitude: row.longitude,
+                    latitude: row.latitude,
+                    altitude: row.altitude,
+                    defaultPhotoId: row.default_photo_id,
+                    isGMC: row.is_gmc,
+                    architecture: row.architecture,
+                    builtBy: row.built_by,
+                    notes: row.notes,
+                    isExtant: row.is_extant,
+                    updated: row.updated,
+                    id: row.id,
+                    akas: row.aka_id
+                        ? (acc[row.id.toString()]?.akas || []).concat({
+                            id: row.aka_id,
+                            shelterId: row.id,
+                            name: row.aka_name,
+                            notes: row.notes,
+                            created: row.aka_created,
+                            updated: row.aka_updated
+                        })
+                        : []
+                }
+            }), {}))
+
+
+}
+
+
 ipcMain.handle("READ_SHELTERS", (event, arg: any) => {
- return new Promise(function(resolve, reject) {
-    // do stuff
-   try {
-     const shelters = dbAPI.readShelters();
-     console.log("SHELTERS:", shelters);
-     resolve(shelters);
-   } catch(err){
-      console.log(err);
-      reject("this didn't work!");
-    }
-  });
+    return new Promise(function (resolve, reject) {
+        try {
+            const shelters = dbAPI.readShelters();
+            const reducedShelters = reduceShelters(shelters);
+            resolve(reducedShelters);
+        } catch (err) {
+            console.log(err);
+            reject("this didn't work!");
+        }
+    });
 });
 
 ipcMain.handle("OPEN_IN_DEFAULT_BROWSER", (event, url: string) => {
-  return new Promise(function(resolve, reject) {
-    // do stuff
-    try {
-      shell.openExternal(url);
-      resolve("opened in default browser");
-    } catch(err){
-      console.log(err);
-      reject("this didn't work!");
-    }
-  });
+    return new Promise(function (resolve, reject) {
+        // do stuff
+        try {
+            shell.openExternal(url);
+            resolve("opened in default browser");
+        } catch (err) {
+            console.log(err);
+            reject("this didn't work!");
+        }
+    });
 });
 
 ipcMain.handle("UPDATE_SHELTER", (event, shelter: Shelter) => {
-  return new Promise(function(resolve, reject) {
-    try {
-      if (!shelter.id) {
-        reject("shelter must have an ID");
-      }
-      const myShelter = dbAPI.updateShelter(shelter);
-      console.log("UPDATING SHELTER:", JSON.stringify(shelter));
-      resolve(myShelter);
-    } catch(err){
-      console.log(err);
-      reject("this didn't work!");
-    }
-  });
+    return new Promise(function (resolve, reject) {
+        try {
+            if (!shelter.id) {
+                reject("shelter must have an ID");
+            }
+            const myShelter = dbAPI.updateShelter(shelter);
+            console.log("UPDATING SHELTER:", JSON.stringify(shelter));
+            resolve(myShelter);
+        } catch (err) {
+            console.log(err);
+            reject("this didn't work!");
+        }
+    });
 });
 
 ipcMain.handle("CREATE_SHELTER", (event, shelter: Shelter) => {
-  return new Promise(function(resolve, reject) {
-    try {
-      const myShelter = dbAPI.insertShelter(shelter);
-      console.log("UPDATING SHELTER:", JSON.stringify(shelter));
-      resolve(myShelter);
-    } catch(err){
-      console.log(err);
-      reject("this didn't work!");
-    }
-  });
+    return new Promise(function (resolve, reject) {
+        try {
+            const myShelter = dbAPI.insertShelter(shelter);
+            console.log("UPDATING SHELTER:", JSON.stringify(shelter));
+            resolve(myShelter);
+        } catch (err) {
+            console.log(err);
+            reject("this didn't work!");
+        }
+    });
 });
 
-ipcMain.handle("DELEte_SHELTER", (event, shelter: Shelter) => {
-  return new Promise(function(resolve, reject) {
-    try {
-      const myResults = dbAPI.deleteShelter(shelter);
-      console.log("DELETING SHELTER:", JSON.stringify(shelter));
-      resolve(myResults);
-    } catch(err){
-      console.log(err);
-      reject("this didn't work!");
-    }
-  });
+ipcMain.handle("DELETE_SHELTER", (event, shelter: Shelter) => {
+    return new Promise(function (resolve, reject) {
+        try {
+            const myResults = dbAPI.deleteShelter(shelter);
+            console.log("DELETING SHELTER:", JSON.stringify(shelter));
+            resolve(myResults);
+        } catch (err) {
+            console.log(err);
+            reject("this didn't work!");
+        }
+    });
+});
+
+ipcMain.handle("READ_CATEGORIES", (event, arg: any) => {
+    return new Promise(function (resolve, reject) {
+        // do stuff
+        try {
+            const categories = dbAPI.readCategories();
+            console.log("CATEGORIES:", categories);
+            resolve(categories);
+        } catch (err) {
+            console.log(err);
+            reject("this didn't work!");
+        }
+    });
+});
+
+ipcMain.handle("READ_ARCHITECTURES", (event, arg: any) => {
+    return new Promise(function (resolve, reject) {
+        // do stuff
+        try {
+            const architectures = dbAPI.readArchitectures();
+            console.log("ARCHITECTURES:", architectures);
+            resolve(architectures);
+        } catch (err) {
+            console.log(err);
+            reject("this didn't work!");
+        }
+    });
+});
+
+
+ipcMain.handle("ADD_AKA", (event, arg: {shelter:Shelter, aka?:AKA}) => {
+    return new Promise(function (resolve, reject) {
+        // do stuff
+        try {
+            const myAKA = {...akaFactory(arg.aka || {}), shelterId: arg.shelter.id};
+            const response =    dbAPI.addAKA(myAKA);
+            console.log("AKA:", response);
+            resolve(akaFactory(response));
+        } catch (err) {
+            console.log(err);
+            reject("this didn't work!");
+        }
+    });
+});
+ipcMain.handle("REMOVE_AKA", (event, arg: number) => {
+    return new Promise(function (resolve, reject) {
+        // do stuff
+        try {
+            const result = dbAPI.removeAKA(arg);
+            console.log("AKA REMOVED:", result);
+            resolve(result);
+        } catch (err) {
+            console.log(err);
+            reject("this didn't work!");
+        }
+    });
+});
+
+ipcMain.handle("UPDATE_AKA", (event, arg: AKA) => {
+    return new Promise(function (resolve, reject) {
+        // do stuff
+        try {
+            const aka = dbAPI.updateAKA(arg);
+            console.log("AKA UPDATED:", aka);
+            resolve(aka);
+        } catch (err) {
+            console.log(err);
+            reject("this didn't work!");
+        }
+    });
 });

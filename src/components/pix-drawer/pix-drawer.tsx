@@ -10,7 +10,7 @@ import Drawer from "@mui/material/Drawer";
 
 const drawerBleeding = 56;
 
-interface SearchResultsDrawerProps {
+interface PixDrawerProps {
     /**
      * Injected by the documentation to work in an iframe.
      * You won't need it on your project.
@@ -41,7 +41,7 @@ const Puller = styled("div")(({theme}) => ({
     left: "calc(50% - 15px)",
 }));
 
-const SearchResultsDrawer = ({window, isOpen, searchResults = [], toggleDrawer}: SearchResultsDrawerProps) => {
+const PixDrawer = ({window, isOpen, searchResults = [], toggleDrawer}: PixDrawerProps) => {
 
 
     // This is used only for the example
@@ -100,4 +100,4 @@ const SearchResultsDrawer = ({window, isOpen, searchResults = [], toggleDrawer}:
 }
 
 
-export default SearchResultsDrawer
+export default PixDrawer

@@ -1,6 +1,6 @@
 import { makeNumber, makeString } from "./factory-helpers";
 
-const architectureFactory = (architecture?: Architecture | null): Architecture => {
+const architectureFactory = (architecture?: any | null): Architecture => {
 
   if (!architecture) {
     return architectureFactory({})

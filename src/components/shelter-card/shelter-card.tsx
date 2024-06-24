@@ -14,15 +14,16 @@ interface ShelterInfoProps {
     onClick: () => void;
 }
 
+
 const ShelterCard: React.FC<ShelterInfoProps> = ({shelter, isSelected = false, isEditing = false, onClick}) => {
     return (
         <Card className={isSelected ? "shelter-card_block is_selected" : "shelter-card_block"} onClick={onClick}>
             {
                 isEditing ? (
-               <EditShelterInfo shelter={shelter} onSave={(shelter: Shelter)=>{}}/>
-            ) : (
-                <ViewShelterInfo shelter={shelter}/>
-            )}
+                    <EditShelterInfo shelter={shelter}/>
+                ) : (
+                    <ViewShelterInfo shelter={shelter}/>
+                )}
         </Card>
     );
 };
