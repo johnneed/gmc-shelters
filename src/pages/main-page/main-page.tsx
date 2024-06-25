@@ -1,38 +1,55 @@
-import React, {useState, Fragment} from "react";
+import React, {useState, Fragment, useEffect} from "react";
 import "./styles.css";
-// import ShelterCard from "../../components/shelter-card/shelter-card";
-// import {Typography} from "@mui/material";
-// import {ErrorMessage} from "../../components/error-message";
+import ShelterCard from "../../components/shelter-card/shelter-card";
+import {Typography} from "@mui/material";
+import {ErrorMessage} from "../../components/error-message";
 import Box from "@mui/material/Box";
+import {ERequestStatus} from "../../common/request";
 
+import {useAppSelector, useAppDispatch} from "../../store/hooks";
+import {
+    selectShelters,
+    selectStatus,
+    fetchShelters,
+    selectedActiveShelterId,
+    activateShelter,
+    fetchCategories,
+    fetchArchitectures
+} from "../../store/slices/shelters.slice";
 
 const MainPage: React.FC = () => {
-    // const [selectedShelter, setSelectedShelter] = useState<number | null>(null); // [1
-    //
-    //
-    // const selectShelter = (id: number | null) => () => {
-    //     setSelectedShelter(id);
-    // }
+    const shelters = useAppSelector(selectShelters);
+    const sheltersStatus = useAppSelector(selectStatus);
+    const dispatch = useAppDispatch();
+    const activeShelterId = useAppSelector(selectedActiveShelterId);
+    const editShelter = (id:number | null) => () => {
+        dispatch(activateShelter(id));
+    }
 
-
+    useEffect(() => {
+        dispatch(fetchShelters());
+        dispatch(fetchCategories());
+        dispatch(fetchArchitectures());
+    }, []);
     return (
-         <Box component="main" className="main-page" sx={{p: 3}}>
-            {/*{sheltersError ? (<ErrorMessage message={sheltersError.message}/>) : null}*/}
-            {/*{shelters ? (*/}
-            {/*    <div className={"shelters"}>*/}
-            {/*        {shelters.map((shelter: Shelter) => (*/}
-            {/*            <Fragment key={shelter.id}>*/}
-            {/*                <div id={"main-page-a"}/>*/}
-            {/*                <ShelterCard shelter={shelter} isEditing={shelter.id === selectedShelter}*/}
-            {/*                             onClick={selectShelter(shelter.id)}/>*/}
-            {/*            </Fragment>*/}
-            {/*        ))}*/}
-            {/*    </div>*/}
-            {/*) : (*/}
-            {/*    <Typography variant={"h6"} component={"h6"}>Loading data...</Typography>*/}
-            {/*)}*/}
+        <Box component="main" className="main-page" sx={{p: 3}}>
+            <h1>MAIN PAGE</h1>
+            {sheltersStatus === ERequestStatus.FAILED ? (<ErrorMessage message={"Something went wrong"}/>) : null}
+            {shelters ? (
+                <div className={"shelters"}>
+                    {(shelters).map((shelter: Shelter) => (
+                        <Fragment key={shelter.id}>
+                            <div id={"main-page-a"}/>
+                            <ShelterCard shelter={shelter} isEditing={shelter.id === activeShelterId}
+                                         onClick={editShelter(shelter.id)}/>
+                        </Fragment>
+                    ))}
+                </div>
+            ) : (
+                <Typography variant={"h6"} component={"h6"}>Loading data...</Typography>
+            )}
         </Box>
-     );
+    );
 };
 
 export default MainPage;

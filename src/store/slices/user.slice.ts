@@ -1,6 +1,6 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { RootState } from '..';
-import request, { ERequestStatus } from '../../common/request';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import type { RootState } from "..";
+import request, { ERequestStatus } from "../../common/request";
 
 export interface IUser {
   id: string;
@@ -19,30 +19,30 @@ const initialState: IUserState = {
   status: ERequestStatus.IDLE,
 };
 
-export const fetchUsers = createAsyncThunk('user/fetchUsers', async () => {
-  const response = await request.get<IUser[]>('users');
+export const fetchUsers = createAsyncThunk("user/fetchUsers", async () => {
+  const response = await request.get<IUser[]>("users");
   return response;
 });
 
-export const deleteUser = createAsyncThunk('user/deleteUser', async (id: number | string) => {
+export const deleteUser = createAsyncThunk("user/deleteUser", async (id: number | string) => {
   const response = await request.delete<IUser>(`users/${id}`);
   return response;
 });
 
-export const updateUser = createAsyncThunk('user/updateUser', async (user: IUser) => {
+export const updateUser = createAsyncThunk("user/updateUser", async (user: IUser) => {
   const { id, ...info } = user;
   const response = await request.put<string, IUser>(`users/${id}`, JSON.stringify(info));
   return response;
 });
 
-export const addUser = createAsyncThunk('user/addUser', async (user: IUser) => {
+export const addUser = createAsyncThunk("user/addUser", async (user: IUser) => {
   const { id, ...info } = user;
-  const response = await request.post<string, IUser>(`users`, JSON.stringify(info));
+  const response = await request.post<string, IUser>("users", JSON.stringify(info));
   return response;
 });
 
 export const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {},
   extraReducers: (builder) => {

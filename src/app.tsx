@@ -1,6 +1,6 @@
 import {createRoot} from "react-dom/client";
-// import {Layout} from "./components/layout";
-// import {MainPage} from "./pages/main-page";
+import {Layout} from "./components/layout";
+import {MainPage} from "./pages/main-page";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
@@ -20,18 +20,18 @@ const root = createRoot(document.getElementById("root"));
 const router = createHashRouter([
     {
         path: "/",
-        element: <div>MAIN</div>,
+        element: <Layout><MainPage/></Layout>
     },
     {
         path: "/map",
         element:
-            <div>MAP</div>
+            <Layout><main>MAP</main></Layout>
 
     },
     {
         path: "/about",
         element:
-            <div>About</div>
+            <Layout><main>ABOUT</main></Layout>
     
     },
 ]);

@@ -17,13 +17,16 @@ import Divider from "@mui/material/Divider";
 import Grid from "@mui/material/Unstable_Grid2";
 import DefaultShelterImage from "./default-shelter-image";
 import {shelterFactory} from "../../factories"; // Grid version 2
-import useCategories from "../../hooks/use-categories";
-import useArchitectures from "../../hooks/use-architectures";
+import {
+    selectCategories,
+    selectArchitectures
+} from "../../store/slices/shelters.slice";
 import AKAControl from "../aka-control/aka-control";
+import {useAppSelector} from "../../store/hooks";
+
 interface ShelterInfoProps {
     shelter?: Shelter;
 }
-
 
 enum Action {
     UPDATE_NAME,
@@ -44,6 +47,7 @@ enum Action {
     REMOVE_AKA,
     UPDATE_AKA
 }
+
 
 function reducer(state: Shelter, action: { type: Action, payload?: any }): Shelter {
     switch (action.type) {
@@ -138,8 +142,8 @@ function reducer(state: Shelter, action: { type: Action, payload?: any }): Shelt
 }
 
 const EditShelterInfo: React.FC<ShelterInfoProps> = ({shelter}) => {
-    const {categories, isCategoriesLoading, categoriesError} = useCategories();
-    const {architectures, isArchitecturesLoading, architecturesError} = useArchitectures();
+    const categories = useAppSelector(selectCategories);
+    const architectures = useAppSelector(selectArchitectures)
     const [state, dispatch] = useReducer(reducer, shelter || shelterFactory());
     return (
         <Box className={"edit_shelter_info_block"}>
