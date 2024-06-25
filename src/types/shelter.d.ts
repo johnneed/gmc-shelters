@@ -1,4 +1,3 @@
-
 type Shelter = {
     id?: number;
     name?: string;
@@ -12,10 +11,11 @@ type Shelter = {
     defaultPhotoId?: number;
     isGMC?: boolean;
     architecture?: string;
+    category?: string;
     builtBy?: string;
     notes?: string;
     photos?: Photo[]
-    aka?: AKA[]
+    akas?: AKA[]
     isExtant?: boolean;
     created?: string;
     updated?: string;

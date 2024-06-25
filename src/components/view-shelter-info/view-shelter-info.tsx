@@ -25,7 +25,7 @@ const openLink = (url: string) => () => {
 
 
 const ViewShelterInfo: React.FC<ShelterInfoProps> = ({shelter, isSelected = false}) => {
-
+    console.log("Shelter: ", shelter);
 
     return (
         <Box className={isSelected ? "view_shelter_info_block is_selected" : "view_shelter_info_block"}>
@@ -108,7 +108,7 @@ const ViewShelterInfo: React.FC<ShelterInfoProps> = ({shelter, isSelected = fals
                                 <Paper sx={{padding: "0.5rem"}} variant="outlined">
                                     <Typography component={"p"} sx={{fontWeight: "500"}}>AKAs</Typography>
                                     {
-                                        shelter.aka.map((aka) => (
+                                        shelter.akas.map((aka: AKA) => (
                                             <Typography key={aka.id} component={"p"}>{aka.name}</Typography>
                                         ))
                                     }

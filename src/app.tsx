@@ -5,33 +5,46 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-
-const root = createRoot(document.getElementById("root"));
+import React from "react";
+// import ReactDOM from 'react-dom/client';
+import {Provider} from "react-redux";
+import {store} from "./store";
 import {
     createHashRouter,
     RouterProvider,
 } from "react-router-dom";
 
+const root = createRoot(document.getElementById("root"));
+
+
 const router = createHashRouter([
     {
         path: "/",
-        element: <Layout><MainPage/></Layout>,
+        element: <Layout><MainPage/></Layout>
     },
     {
         path: "/map",
-        element: <Layout>
-            <div>MAP</div>
-        </Layout>
+        element:
+            <Layout><main>MAP</main></Layout>
+
     },
     {
         path: "/about",
-        element: <Layout>
-            <div>About</div>
-        </Layout>
+        element:
+            <Layout><main>ABOUT</main></Layout>
+    
     },
 ]);
 
+
 root.render(
-    <RouterProvider router={router}/>
-);
+    <React.StrictMode>
+        <Provider store={store}>
+        <RouterProvider router={router}/>
+    </Provider>
+</React.StrictMode>,
+)
+;
+
+
 

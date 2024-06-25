@@ -5,3 +5,13 @@
 .edit_shelter_info_block.is_selected {
     backdrop-filter: sepia(90%);;
 }
+
+
+.observed-element {
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 800px;
+    max-height: 800px;
+}
+
+span.edit-menu-item{display: block; height: 100%; width: 100%;}
