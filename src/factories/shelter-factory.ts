@@ -15,7 +15,7 @@ const shelterFactory = (shelter?: any): Shelter => {
         endYear: makeNumber(shelter.endYear || shelter.end_year),
         description: makeString(shelter.description),
         slug: makeString(shelter.slug),
-        longitude: makeNumber(shelter.latitude),
+        longitude: makeNumber(shelter.longitude),
         latitude: makeNumber(shelter.latitude),
         altitude: makeNumber(shelter.altitude),
         defaultPhotoId: makeNumber(shelter.default_photo_id || shelter.defaultPhotoId),

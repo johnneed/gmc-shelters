@@ -5,7 +5,19 @@ import addAKA from "./add-aka";
 import updateAKA from "./update-aka";
 import deleteAKA from "./delete-aka";
 import readShelters from "./read-shelters";
-import openInDefaultBrowser  from "./open-in-default-browser";
-import readCategories    from "./read-categories";
+import openInDefaultBrowser from "./open-in-default-browser";
+import readCategories from "./read-categories";
 import readArchitectures from "./read-architectures";
-export {readArchitectures, readCategories, updateShelter, addShelter, deleteShelter, addAKA, updateAKA, deleteAKA, readShelters, openInDefaultBrowser};
+
+export {
+    readArchitectures,
+    readCategories,
+    updateShelter,
+    addShelter,
+    deleteShelter,
+    addAKA,
+    updateAKA,
+    deleteAKA,
+    readShelters,
+    openInDefaultBrowser
+};

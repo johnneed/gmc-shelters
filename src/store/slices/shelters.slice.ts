@@ -6,7 +6,7 @@ import * as api from "../../api";
 
 export interface IShelterState {
     shelters: Shelter[];
-    activeShelterId: number | null;
+    activeShelter: Shelter | null;
     categories: Category[];
     architectures: Architecture[];
     status: ERequestStatus;
@@ -14,54 +14,101 @@ export interface IShelterState {
 
 const initialState: IShelterState = {
     shelters: [],
-    activeShelterId: null,
+    activeShelter: null,
     categories: [],
     architectures: [],
     status: ERequestStatus.IDLE,
 };
 
-export const fetchShelters = createAsyncThunk("shelter/fetchShelters", async () => {
+export const fetchShelters = createAsyncThunk("shelters/fetchShelters", async () => {
     console.log("FETCHING SHELTERS");
     const response = await api.readShelters();
     return response;
 });
 
-export const deleteShelter = createAsyncThunk("shelter/deleteShelter", async (shelter: Shelter) => {
+export const deleteShelter = createAsyncThunk("shelters/deleteShelter", async (shelter: Shelter) => {
     const response = await api.deleteShelter(shelter);
     return response;
 });
 
-export const updateShelter = createAsyncThunk("shelter/updateShelter", async (shelter: Shelter) => {
-    const response = await api.updateShelter(shelter);
-    return response;
+export const updateShelter = createAsyncThunk("shelters/updateShelter", async (shelter: Shelter, {
+    dispatch
+}) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    // const fallback = getState().shelters.find((s: Shelter) => s.id === shelter.id);
+    try {
+        const isNew = !shelter.id;
+        dispatch(sheltersSlice.actions.saveActiveShelter());
+        api.updateShelter(shelter);
+    } catch (err) {
+        console.error(err);
+        // dispatch(sheltersSlice.actions.updateShelter(fallback));
+    }
 });
 
-export const addShelter = createAsyncThunk("shelter/addShelter", async (shelter: Shelter) => {
+export const addShelter = createAsyncThunk("shelters/addShelter", async (shelter: Shelter) => {
     const response = await api.addShelter(shelter);
     return response;
 });
 
+export const addAKA = createAsyncThunk("shelters/addAKA", async (shelterId: number) => {
+    console.log("ADDING AKA RESPONSE", shelterId);
+    const response = await api.addAKA(shelterId);
+    console.log("ADD AKA RESPONSE", response);
+    return response;
+});
 
-
-export const fetchCategories = createAsyncThunk("shelter/fetchCategories", async () => {
+export const fetchCategories = createAsyncThunk("shelters/fetchCategories", async () => {
     console.log("FETCHING CATEGORIES");
     const response = await api.readCategories();
     return response;
 });
 
-export const fetchArchitectures = createAsyncThunk("shelter/fetchArchitectures", async () => {
+export const fetchArchitectures = createAsyncThunk("shelters/fetchArchitectures", async () => {
     console.log("FETCHING ARCHITECTURES");
     const response = await api.readArchitectures();
     return response;
 });
 
-export const shelterSlice = createSlice({
+export const sheltersSlice = createSlice({
     name: "shelters",
     initialState,
     reducers: {
-        activateShelter: (_state, action: PayloadAction<number>) => {
+        activateShelter: (_state, action: PayloadAction<Shelter>) => {
             const state = _state;
-            state.activeShelterId = isNaN(action.payload) ? null : action.payload
+            state.activeShelter = action.payload
+        },
+        clearActiveShelter: (_state) => {
+            const state = _state;
+            state.activeShelter = null;
+        },
+        saveActiveShelter: (_state) => {
+            const state = _state;
+            const shelterIds = state.shelters.map(s => s.id);
+            const activeShelter = state.activeShelter;
+            if (shelterIds.includes(activeShelter.id)) {
+                state.shelters = state.shelters.map(s => s.id === activeShelter.id ? activeShelter : s);
+            } else {
+                state.shelters = [...state.shelters, activeShelter];
+            }
+        },
+        updateActiveShelter: (state, action: PayloadAction<{[key:string]: string}>) => {
+            const updatedShelter = {...state.activeShelter, ...action.payload};
+            console.log("UPDATED SHELTER", updatedShelter);
+            state.activeShelter = updatedShelter;
+        },
+        addAKA: (_state, action: PayloadAction<AKA>) => {
+            const state = _state;
+            state.activeShelter.akas = state.activeShelter.akas.concat(action.payload)
+        },
+        deleteAKA: (_state, action: PayloadAction<number>) => {
+            const state = _state;
+            state.activeShelter.akas = state.activeShelter.akas.filter(a => a.id !== action.payload);
+        },
+        updateAKAs: (_state, action: PayloadAction<{aka: AKA, index: number} >) => {
+            const state = _state;
+            state.activeShelter.akas[action.payload.index] = action.payload.aka;
         }
     },
     extraReducers: (builder) => {
@@ -89,24 +136,9 @@ export const shelterSlice = createSlice({
                 state.shelters = state.shelters.filter((u) => u.id !== action.meta.arg);
             })
             .addCase(deleteShelter.rejected, (_state) => {
-                const state = _state;
-                state.status = ERequestStatus.FAILED;
+                _state.status = ERequestStatus.FAILED;
             })
-            .addCase(updateShelter.pending, (_state) => {
-                const state = _state;
-                state.status = ERequestStatus.LOADING;
-            })
-            .addCase(updateShelter.fulfilled, (_state: IShelterState, action) => {
-                const state = _state;
-                state.status = ERequestStatus.SUCCEEDED;
-                state.shelters = state.shelters.map((s) =>
-                    s.id !== action.meta.arg.id ? s : action.meta.arg,
-                );
-            })
-            .addCase(updateShelter.rejected, (_state) => {
-                const state = _state;
-                state.status = ERequestStatus.FAILED;
-            })
+
             .addCase(addShelter.pending, (_state) => {
                 const state = _state;
                 state.status = ERequestStatus.LOADING;
@@ -125,7 +157,6 @@ export const shelterSlice = createSlice({
             })
             .addCase(fetchCategories.fulfilled, (_state, action) => {
                 const state = _state;
-                state.status = ERequestStatus.SUCCEEDED;
                 state.categories = action.payload;
             })
             .addCase(fetchCategories.rejected, (_state) => {
@@ -136,22 +167,32 @@ export const shelterSlice = createSlice({
             })
             .addCase(fetchArchitectures.fulfilled, (_state, action) => {
                 const state = _state;
-                state.status = ERequestStatus.SUCCEEDED;
                 state.architectures = action.payload;
             })
             .addCase(fetchArchitectures.rejected, (_state) => {
                 const state = _state;
             })
+            .addCase(addAKA.pending, (_state) => {
+                const state = _state;
+            })
+            .addCase(addAKA.fulfilled, (_state, action) => {
+                const state = _state;
+                state.shelters[state.activeShelter.id].akas = state.shelters[state.activeShelter.id].akas.concat(action.payload);
+            })
+            .addCase(addAKA.rejected, (_state) => {
+                const state = _state;
+            })
     },
 });
 
-export const {activateShelter} = shelterSlice.actions
+export const {activateShelter, saveActiveShelter, clearActiveShelter,  updateActiveShelter} = sheltersSlice.actions
 
 
+// SELECTORS
 export const selectShelters = (state: RootState) => state.shelters.shelters;
 export const selectStatus = (state: RootState) => state.shelters.status;
-export const selectedActiveShelterId = (state: RootState) => state.shelters.activeShelterId;
+export const selecteActiveShelter = (state: RootState) => state.shelters.activeShelter;
 export const selectCategories = (state: RootState) => state.shelters.categories;
 export const selectArchitectures = (state: RootState) => state.shelters.architectures;
 
-export default shelterSlice.reducer;
+export default sheltersSlice.reducer;

@@ -12,11 +12,18 @@ const makeBool = (bool: unknown, deflt = false): boolean | undefined => {
         case "string":
             if (bool.toLowerCase() === "true") {
                 return true;
-            } else if (bool.toLowerCase() === "false") {
-                return false;
-            } else {
-                return deflt;
             }
+            if (bool.toLowerCase() === "false") {
+                return false;
+            }
+            if (bool.toLowerCase() === "on") {
+                return true;
+            }
+            if (bool.toLowerCase() === "off") {
+                return false;
+            }
+            return deflt;
+
         case "number":
             switch (bool) {
                 case 1:

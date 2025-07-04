@@ -1,17 +1,20 @@
 import {akaFactory} from "../factories";
+import {debounce} from "../lib/debounce";
 
-const updateAKA = async (aka: AKA) => {
+const updateAKA = debounce(async (aka: AKA, callback?: (aka: AKA) => void) => {
     try {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const response = await window.api.invoke("UPDATE_AKA", aka);
-        console.log("AKA UPDATED: ", JSON.stringify(response, null, 2));
-        return akaFactory(response);
+        window.api.invoke("UPDATE_AKA", aka).then((response) => {
+            if (callback) {
+                callback(akaFactory(response));
+            }
+        });
+    } catch (err) {
+        console.error(err);
+        throw 400;
     }
-    catch(err) {
-            console.error(err);
-            throw 400;
-        }
-}
+})
+
 
 export default updateAKA;

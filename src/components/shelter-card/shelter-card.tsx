@@ -10,17 +10,18 @@ import {EditShelterInfo} from "../edit-shelter-info"; // Grid version 2
 interface ShelterInfoProps {
     shelter: Shelter;
     isSelected?: boolean;
-    isEditing?: boolean;
+    activeShelter: Shelter | null;
     onClick: () => void;
 }
 
 
-const ShelterCard: React.FC<ShelterInfoProps> = ({shelter, isSelected = false, isEditing = false, onClick}) => {
+const ShelterCard: React.FC<ShelterInfoProps> = ({shelter, isSelected = false, activeShelter, onClick}) => {
+   const isEditing = Boolean(activeShelter && (activeShelter?.id === shelter.id));
     return (
         <Card className={isSelected ? "shelter-card_block is_selected" : "shelter-card_block"} onClick={onClick}>
             {
                 isEditing ? (
-                    <EditShelterInfo shelter={shelter}/>
+                    <EditShelterInfo shelter={activeShelter}/>
                 ) : (
                     <ViewShelterInfo shelter={shelter}/>
                 )}

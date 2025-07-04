@@ -16,17 +16,13 @@ const openLink = (url: string) => () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     window.api.invoke("OPEN_IN_DEFAULT_BROWSER", url).then(function (res: unknown[]) {
-        // console.log(res);
     })
         .catch(function (err: Error) {
-            // console.error(err);
         });
 };
 
 
 const ViewShelterInfo: React.FC<ShelterInfoProps> = ({shelter, isSelected = false}) => {
-    console.log("Shelter: ", shelter);
-
     return (
         <Box className={isSelected ? "view_shelter_info_block is_selected" : "view_shelter_info_block"}>
             <Box display={"flex"} justifyContent={"space-between"}>
@@ -61,7 +57,7 @@ const ViewShelterInfo: React.FC<ShelterInfoProps> = ({shelter, isSelected = fals
                             <Grid xs={6}>
                                 <Paper sx={{padding: "0.5rem"}} variant="outlined">
                                     <Typography variant={"h6"}
-                                                component={"h6"}>Category: {shelter.architecture || "None"}</Typography>
+                                                component={"h6"}>Category: {shelter.category || "None"}</Typography>
                                 </Paper>
                             </Grid>
                             <Grid xs={6}>

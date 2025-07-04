@@ -78,34 +78,9 @@ export default function TopAppBar(props: Props) {
         <Box sx={{display: "flex"}}>
             <CssBaseline/>
             <AppBar component="nav">
+
                 <Toolbar variant="dense">
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        color="inherit"
-                        aria-label="open drawer"
-                        sx={{mr: 2}}
-                        onClick={props.onMenuClick}
-                    >
-                        <MenuIcon/>
-                    </IconButton>
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{flexGrow: 0, display: {xs: "none", sm: "none", "md": "block"}}}
-                    >
-                        GMC SHELTERS
-                    </Typography>
-                    <Search>
-                        <SearchIconWrapper>
-                            <SearchIcon/>
-                        </SearchIconWrapper>
-                        <StyledInputBase
-                            placeholder="Search…"
-                            inputProps={{"aria-label": "search"}}
-                        />
-                    </Search>
-                    <Box sx={{flexGrow: 0, justifyContent: "flex-end", display: "flex"}}>
+                    <Box sx={{flexGrow: 0}}>
                         {navItems.map((item) => (
                             <Button
                                 key={item.text}
@@ -118,7 +93,32 @@ export default function TopAppBar(props: Props) {
                             </Button>
                         ))}
                     </Box>
-
+                    {/*<Typography*/}
+                    {/*    variant="h6"*/}
+                    {/*    component="div"*/}
+                    {/*    sx={{flexGrow: 0, display: {xs: "none", sm: "none", "md": "block"}}}*/}
+                    {/*>*/}
+                    {/*    GMC SHELTERS*/}
+                    {/*</Typography>*/}
+                    <Search>
+                        <SearchIconWrapper>
+                            <SearchIcon/>
+                        </SearchIconWrapper>
+                        <StyledInputBase
+                            placeholder="Search…"
+                            inputProps={{"aria-label": "search"}}
+                        />
+                    </Search>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="open drawer"
+                        sx={{mr: 2}}
+                        onClick={props.onMenuClick}
+                    >
+                        <MenuIcon/>
+                    </IconButton>
                 </Toolbar>
             </AppBar>
         </Box>
