@@ -63,7 +63,7 @@ const updateShelter = (shelter: Shelter) => {
         const now = getNowString();
 
         const queryString = `UPDATE SHELTERS SET name = ${stringOrNull(shelter.name)}, ` +
-            `start_year =  ${numberOrNull(shelter.startYear)}, ` +
+            `start_year = ${numberOrNull(shelter.startYear)}, ` +
             `end_year = ${numberOrNull(shelter.endYear)},` +
             `description = ${stringOrNull(shelter.description)}, ` +
             `slug = ${stringOrNull(shelter.slug)}, ` +
@@ -76,15 +76,30 @@ const updateShelter = (shelter: Shelter) => {
             `built_by = ${stringOrNull(shelter.builtBy)}, ` +
             `notes = ${stringOrNull(shelter.notes)}, ` +
             `is_extant = ${bool2Int(shelter.isExtant)}, ` +
-            `updated = '${now}' ` +
+            `updated = '${now}', ` +
+            `category = ${stringOrNull(shelter.category)} ` +
             `WHERE id = ${shelter.id}`;
-        console.log(queryString);
-        const insertQuery = db.prepare(queryString);
+        console.log("QUERY STRING FOR UPDATE SHELTER: ", queryString);
+        const shelterUpdateQuery = db.prepare(queryString);
 
         const transaction = db.transaction(() => {
-            const info = insertQuery.run()
-        })
-        transaction()
+            const info = shelterUpdateQuery.run()
+        });
+
+        transaction();
+
+        (shelter.akas || []).forEach((aka: AKA) => {
+            if (aka.id) {
+                updateAKA(aka);
+            } else {
+                addAKA({...aka, shelterId: shelter.id});
+            }
+        });
+
+        const readShelterQueryString = "SELECT * FROM view_shelters_akas WHERE id = " + shelter.id;
+        console.log("QUERY STRING FOR SELECT SHELTER: ", readShelterQueryString);
+        const readQuery = db.prepare(readShelterQueryString);
+        return readQuery.all();
     } catch (err) {
         console.error(err)
         throw err
@@ -113,8 +128,6 @@ const deleteShelter = (shelter: Shelter) => {
 }
 
 
-
-
 const readCategories = () => {
     try {
         const query = "SELECT * FROM categories";
@@ -125,7 +138,6 @@ const readCategories = () => {
         throw err
     }
 }
-
 
 
 const readArchitectures = () => {
@@ -140,11 +152,13 @@ const readArchitectures = () => {
 }
 
 
-const addAKA = (aka:AKA) => {
+const addAKA = (aka: AKA) => {
     try {
-        const insertQuery = db.prepare(
-            `INSERT INTO shelter_akas (shelter_id, notes, name, created, updated) VALUES (${aka.shelterId}, ${aka.notes || "null"}, ${aka.name || "null"},${getNowString()}, ${getNowString()})`
-        )
+        const queryString = `INSERT INTO shelter_akas (shelter_id, notes, name, created, updated) VALUES (` +
+            `${aka.shelterId}, ${stringOrNull(aka.notes)}, ${stringOrNull(aka.name)},'${getNowString()}', '${getNowString()}')`;
+        console.log("QUERY STRING FOR ADD AKA: ", queryString);
+
+        const insertQuery = db.prepare(queryString);
 
         const transaction = db.transaction(() => {
             const info = insertQuery.run()
@@ -163,12 +177,11 @@ const addAKA = (aka:AKA) => {
 
 const removeAKA = (akaId: number) => {
     try {
-        const insertQuery = db.prepare(
-            `DELETE FROM shelter_akas WHERE id = ${akaId}`
-        )
+        const queryString = `DELETE FROM shelter_akas WHERE id = ${akaId}`;
+        const removeAKAQuery = db.prepare(queryString)
 
         const transaction = db.transaction(() => {
-            const info = insertQuery.run()
+            const info = removeAKAQuery.run()
             console.log(
                 `Inserted ${info.changes} rows with last ID
                  ${info.lastInsertRowid} into person`
@@ -185,12 +198,15 @@ const removeAKA = (akaId: number) => {
 
 const updateAKA = (aka: AKA) => {
     try {
-        const insertQuery = db.prepare(
-            `UPDATE shelter_akas SET name = ${aka.name}, notes = ${aka.notes}, updated = ${getNowString()} WHERE id = ${aka.id}`
-        )
+        const queryString = "UPDATE shelter_akas SET " +
+            `name = ${stringOrNull(aka.name)}, ` +
+            `notes = ${stringOrNull(aka.name)}, ` +
+            `updated = '${getNowString()}' WHERE id = ${aka.id}`
+        console.log("QUERY STRING FOR UPDATE AKA: ", queryString);
+        const updateAKAQuery = db.prepare(queryString);
 
         const transaction = db.transaction(() => {
-            const info = insertQuery.run()
+            const info = updateAKAQuery.run()
             console.log(
                 `Inserted ${info.changes} rows with last ID
                  ${info.lastInsertRowid} into person`
@@ -204,5 +220,15 @@ const updateAKA = (aka: AKA) => {
 
 }
 
-const dbAPI = {readShelters, insertShelter, deleteShelter, updateShelter, readCategories, readArchitectures, addAKA, removeAKA, updateAKA};
+const dbAPI = {
+    readShelters,
+    insertShelter,
+    deleteShelter,
+    updateShelter,
+    readCategories,
+    readArchitectures,
+    addAKA,
+    removeAKA,
+    updateAKA
+};
 export default dbAPI

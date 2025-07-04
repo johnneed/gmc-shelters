@@ -17,8 +17,7 @@ if (require("electron-squirrel-startup")) {
 const createWindow = (): void => {
     // Create the browser window.
     const mainWindow = new BrowserWindow({
-        height: 600,
-        width: 800,
+        fullscreen: true,
         webPreferences: {
             preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
         },
@@ -130,11 +129,10 @@ ipcMain.handle("UPDATE_SHELTER", (event, shelter: Shelter) => {
                 reject("shelter must have an ID");
             }
             const myShelter = dbAPI.updateShelter(shelter);
-            console.log("UPDATING SHELTER:", JSON.stringify(shelter));
             resolve(myShelter);
         } catch (err) {
             console.log(err);
-            reject("this didn't work!");
+            reject("UPDATE SHELTER didn't work!");
         }
     });
 });
@@ -194,13 +192,12 @@ ipcMain.handle("READ_ARCHITECTURES", (event, arg: any) => {
 });
 
 
-ipcMain.handle("ADD_AKA", (event, arg: {shelter:Shelter, aka?:AKA}) => {
+ipcMain.handle("ADD_AKA", (event, arg: { aka: AKA }) => {
     return new Promise(function (resolve, reject) {
         // do stuff
         try {
-            const myAKA = {...akaFactory(arg.aka || {}), shelterId: arg.shelter.id};
-            const response =    dbAPI.addAKA(myAKA);
-            console.log("AKA:", response);
+            const myAKA = akaFactory(arg.aka || {});
+            const response = dbAPI.addAKA(myAKA);
             resolve(akaFactory(response));
         } catch (err) {
             console.log(err);

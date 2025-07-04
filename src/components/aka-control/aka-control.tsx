@@ -1,60 +1,73 @@
-import React from "react";
+import React, {ChangeEvent} from "react";
 import "./styles.css";
-import {Typography, Paper, List, Icon, ListItem, Button, TextField, IconButton} from "@mui/material";
-import { Delete } from "@mui/icons-material";
-
+import {Typography, Paper, TextField, IconButton, Stack, SelectChangeEvent} from "@mui/material";
+import {Delete, Add} from "@mui/icons-material";
+import Box from "@mui/material/Box";
+import {akaFactory} from "../../factories";
+import {addAKA} from "../../store/slices/shelters.slice";
 
 interface AKAControlProps {
     akas?: AKA[];
-    onAddAKA?: () => void;
-    onRemoveAKA?: (aka:AKA) => void;
-    onUpdateAKA?: (aka: AKA) => void;
+    shelterId?: number;
 }
 
-const AKAControl: React.FC<AKAControlProps> = ({akas, onUpdateAKA, onAddAKA, onRemoveAKA}: AKAControlProps) => {
+const AKAControl: React.FC<AKAControlProps> = ({akas = []}: AKAControlProps) => {
 
-    const handleNameUpdate = (aka: AKA) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (onUpdateAKA) {
-            onUpdateAKA({...aka, name: e.target.value});
-        }
+    const handleNameUpdate = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newAKA = {...akas[index], name: e.target.value};
+        // onChange({target: {value: newAKAs}});
     }
 
-    const handleNotesUpdate = (aka: AKA) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (onUpdateAKA) {
-            onUpdateAKA({...aka, notes: e.target.value});
-        }
+    const handleNotesUpdate = (index: number) => (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newAKAs = akas.map((a, i) => (i === index ? {...a, notes: e.target.value} : a));
+        // onChange({target: {value: newAKAs}});
     }
-    const handleDelete = (aka: AKA) => () => {
-        if (onRemoveAKA) {
-            onRemoveAKA(aka);
-        }
+    const handleDelete = (index: number) => () => {
+        const newAKAs = akas.filter((a, i) => i !== index);
+        // onChange({target: {value: newAKAs}});
+    }
+
+    const handleAddAKA = () => {
+        const newAKAs = [...akas, akaFactory({name: "", notes: ""})];
+        // onChange({target: {value: newAKAs}});
     }
 
     return (
         <Paper className="aka-control">
-            <Typography variant="h6">Also Known As</Typography>
-            <List>
+            <Stack direction={"row"} spacing={2}>
+                <Typography variant="h6">Also Known As</Typography>
+                <IconButton onClick={handleAddAKA}><Add/></IconButton>
+
+            </Stack>
+            <Stack spacing={3}>
                 {akas?.map((aka, index) => (
-                    <ListItem key={index}>
-                        <TextField
-                            label="Name"
-                            value={aka.name}
-                            onChange={handleNameUpdate(aka)}
-                        />
-                        <TextField
-                            label="Notes"
-                            value={aka.notes}
-                            onChange={handleNotesUpdate(aka)}
-                        />
-                        <IconButton
-                            onClick={handleDelete(aka)}
-                        >
-                            <Delete  />
-                        </IconButton>
-                    </ListItem>
+                    <Box key={index}>
+                        <Stack spacing={1} justifyContent={"space-between"}>
+                            <div>
+                                <TextField
+                                    size={"small"}
+                                    label="Name"
+                                    value={aka.name}
+                                    onChange={handleNameUpdate(index)}
+                                />
+                                <IconButton
+                                    size={"small"}
+                                    onClick={handleDelete(index)}
+                                >
+                                    <Delete/>
+                                </IconButton>
+                            </div>
+                            <TextField
+                                size={"small"}
+                                label="Notes"
+                                multiline={true}
+                                value={aka.notes}
+                                onChange={handleNotesUpdate(index)}
+                            />
+                        </Stack>
+                    </Box>
                 ))}
-            </List>
-            <Button onClick={onAddAKA}>Add AKA</Button>
+            </Stack>
         </Paper>
     );
 };
