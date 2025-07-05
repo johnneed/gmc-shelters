@@ -1,22 +1,16 @@
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
-import Drawer from "@mui/material/Drawer";
-import IconButton from "@mui/material/IconButton";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
+import {CssBaseline, IconButton, Toolbar, Button,alpha, InputBase, styled} from "@mui/material"
 import MenuIcon from "@mui/icons-material/Menu";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import SearchIcon from "@mui/icons-material/Search";
+import ClearIcon from '@mui/icons-material/Clear';
 import "./styles.css";
-import {alpha, InputBase, styled} from "@mui/material";
-import {useNavigate,useLocation} from "react-router-dom";
+import {useNavigate, useLocation} from "react-router-dom";
+import {setFilter, clearFilter, selectFilter} from "../../store/slices/ui.slice";
+import {useAppSelector, useAppDispatch} from "../../store/hooks";
+import {ChangeEvent} from "react";
+import {debounce} from "../../lib/debounce";
 
 interface Props {
     /**
@@ -27,11 +21,29 @@ interface Props {
     onMenuClick?: () => void;
 }
 
-const drawerWidth = 240;
 const navItems = [{text: "Shelters", link: "/"}, {text: "Map", link: "/map"}, {text: "About", link: "/about"}];
 
 export default function TopAppBar(props: Props) {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const updateFilter = debounce((e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const searchString = (e.target as HTMLInputElement).value;
+        console.log("SEARCH_STRING", searchString);
+        if (searchString.length === 0) {
+            dispatch(clearFilter());
+        } else {
+            dispatch(setFilter(searchString));
+        }
+    });
+
+    const clearSearchFilter = () => {
+        dispatch(clearFilter());
+        // Optionally, you can also clear the input field if needed
+        const inputElement = document.querySelector("input[aria-label=\"search\"]");
+        if (inputElement) {
+            (inputElement as HTMLInputElement).value = "";
+        }
+    }
 
     const Search = styled("div")(({theme}) => ({
         flexGrow: 1,
@@ -60,12 +72,25 @@ export default function TopAppBar(props: Props) {
         justifyContent: "center",
     }));
 
+    const ClearFilterWrapper = styled("div")(({theme}) => ({
+        padding: theme.spacing(0, 2),
+        height: "100%",
+        position: "absolute",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        right: 0,
+        top: 0,
+        zIndex: 100
+    }));
+
     const StyledInputBase = styled(InputBase)(({theme}) => ({
         color: "inherit",
         "& .MuiInputBase-input": {
             padding: theme.spacing(1, 1, 1, 0),
             // vertical padding + font size from searchIcon
             paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+            paddingRight: `calc(1em + ${theme.spacing(4)})`,
             transition: theme.transitions.create("width"),
             width: "100%",
             [theme.breakpoints.up("md")]: {
@@ -93,21 +118,27 @@ export default function TopAppBar(props: Props) {
                             </Button>
                         ))}
                     </Box>
-                    {/*<Typography*/}
-                    {/*    variant="h6"*/}
-                    {/*    component="div"*/}
-                    {/*    sx={{flexGrow: 0, display: {xs: "none", sm: "none", "md": "block"}}}*/}
-                    {/*>*/}
-                    {/*    GMC SHELTERS*/}
-                    {/*</Typography>*/}
                     <Search>
                         <SearchIconWrapper>
                             <SearchIcon/>
                         </SearchIconWrapper>
                         <StyledInputBase
+                            onChange={updateFilter}
                             placeholder="Search…"
                             inputProps={{"aria-label": "search"}}
                         />
+                        <ClearFilterWrapper>
+                            <IconButton
+                                size="large"
+                                edge="start"
+                                color="inherit"
+                                aria-label="open drawer"
+                                sx={{mr: 2}}
+                                onClick={clearSearchFilter}
+                            >
+                                <ClearIcon/>
+                            </IconButton>
+                        </ClearFilterWrapper>
                     </Search>
                     <IconButton
                         size="large"
