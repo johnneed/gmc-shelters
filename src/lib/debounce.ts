@@ -5,7 +5,7 @@
  * @param wait The number of milliseconds to delay.
  * @returns {Function} The new debounced function.
  */
-export function debounce(myFunction: (...args: any[]) => any, wait = 2000) {
+export function debounce(myFunction: (...args: any[]) => any, wait = 500) {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
     return function(...args: any[]) {

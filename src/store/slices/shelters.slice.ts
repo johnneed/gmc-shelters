@@ -48,8 +48,7 @@ export const updateShelter = createAsyncThunk("shelters/updateShelter", async (s
 });
 
 export const addShelter = createAsyncThunk("shelters/addShelter", async (shelter: Shelter) => {
-    const response = await api.addShelter(shelter);
-    return response;
+    return await api.addShelter(shelter);
 });
 
 export const addAKA = createAsyncThunk("shelters/addAKA", async (shelterId: number) => {
@@ -61,14 +60,12 @@ export const addAKA = createAsyncThunk("shelters/addAKA", async (shelterId: numb
 
 export const fetchCategories = createAsyncThunk("shelters/fetchCategories", async () => {
     console.log("FETCHING CATEGORIES");
-    const response = await api.readCategories();
-    return response;
+    return await api.readCategories();
 });
 
 export const fetchArchitectures = createAsyncThunk("shelters/fetchArchitectures", async () => {
     console.log("FETCHING ARCHITECTURES");
-    const response = await api.readArchitectures();
-    return response;
+    return await api.readArchitectures();
 });
 
 export const sheltersSlice = createSlice({
@@ -191,7 +188,7 @@ export const {activateShelter, saveActiveShelter, clearActiveShelter,  updateAct
 // SELECTORS
 export const selectShelters = (state: RootState) => state.shelters.shelters;
 export const selectStatus = (state: RootState) => state.shelters.status;
-export const selecteActiveShelter = (state: RootState) => state.shelters.activeShelter;
+export const selectActiveShelter = (state: RootState) => state.shelters.activeShelter;
 export const selectCategories = (state: RootState) => state.shelters.categories;
 export const selectArchitectures = (state: RootState) => state.shelters.architectures;
 

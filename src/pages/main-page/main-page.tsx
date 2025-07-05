@@ -1,4 +1,4 @@
-import React, {useState, Fragment, useEffect, Suspense} from "react";
+import React, {useState, Fragment, useEffect, Suspense, useMemo} from "react";
 import "./styles.css";
 import ShelterCard from "../../components/shelter-card/shelter-card";
 import {ErrorMessage} from "../../components/error-message";
@@ -10,24 +10,38 @@ import {
     selectShelters,
     selectStatus,
     fetchShelters,
-    selecteActiveShelter,
+    selectActiveShelter,
     activateShelter,
     fetchCategories,
     fetchArchitectures
 } from "../../store/slices/shelters.slice";
 import {Loader} from "../../components/loader";
+import {selectFilter} from "../../store/slices/ui.slice";
 
 const MainPage: React.FC = () => {
     const shelters = useAppSelector(selectShelters);
     const sheltersStatus = useAppSelector(selectStatus);
     const dispatch = useAppDispatch();
-    const activeShelter = useAppSelector(selecteActiveShelter);
+    const activeShelter = useAppSelector(selectActiveShelter);
     console.log("ACTIVE SHELTER", activeShelter)
+    const filter: string | null = useAppSelector(selectFilter);
+
     const editShelter = (shelter: Shelter | null) => () => {
         if(shelter) {
             dispatch(activateShelter(shelter));
         }
     }
+
+
+    const filteredShelters = useMemo(()=> {
+        return shelters.filter(shelter => {
+            if (!filter) {
+                return true;
+            }
+            const searchString = filter.toLowerCase();
+            return shelter.name.toLowerCase().includes(searchString)
+        });
+    }, [filter, shelters]);
 
     useEffect(() => {
         dispatch(fetchShelters());
@@ -41,7 +55,7 @@ const MainPage: React.FC = () => {
             {sheltersStatus === ERequestStatus.FAILED ? (<ErrorMessage message={"Something went wrong"}/>) : null}
             {sheltersStatus === ERequestStatus.SUCCEEDED ? (
                 <div className={"shelters"}>
-                    {(shelters).map((shelter: Shelter) => (
+                    {(filteredShelters).map((shelter: Shelter) => (
                         <ShelterCard key={shelter.id} shelter={shelter} activeShelter={activeShelter} onClick={editShelter(shelter)}/>
                     ))}
                 </div>
