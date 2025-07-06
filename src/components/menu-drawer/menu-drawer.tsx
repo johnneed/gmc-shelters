@@ -3,11 +3,11 @@ import Drawer, {DrawerProps} from "@mui/material/Drawer";
 import {Box, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar} from "@mui/material";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import InfoIcon from "@mui/icons-material/Info";
-import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
-import {useEffect} from "react";
-import {useNavigate} from "react-router-dom";
 
+;
+import {useNavigate} from "react-router-dom";
+import AboutItem from "./menu-items/about-item/about-item";
+import UpdatePhotosItem from "./menu-items/update-photos-item/update-photos";
 
 interface menuDrawerProps extends DrawerProps {
     open?: boolean;
@@ -15,11 +15,6 @@ interface menuDrawerProps extends DrawerProps {
 }
 
 const MenuDrawer = ({open, toggleMenu, ...rest}: menuDrawerProps) => {
-
-
-
-    const navigate = useNavigate();
-
 
     return (
         <Drawer
@@ -32,25 +27,8 @@ const MenuDrawer = ({open, toggleMenu, ...rest}: menuDrawerProps) => {
                  role="presentation"
                  onClick={toggleMenu(false)}>
                 <List>
-                    <ListItem disablePadding onClick={() => {
-                        console.log("About clicked");
-                        navigate("/about");
-                    }}>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <InfoIcon/>
-                            </ListItemIcon>
-                            <ListItemText primary={"About"}/>
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem disablePadding onClick={() => console.log("Update Photos clicked")}>
-                        <ListItemButton>
-                            <ListItemIcon>
-                                <PhotoCameraIcon/>
-                            </ListItemIcon>
-                            <ListItemText primary={"Update Photos"}/>
-                        </ListItemButton>
-                    </ListItem>
+                    <AboutItem/>
+                    <UpdatePhotosItem/>
                 </List>
                 <Divider/>
                 <List>

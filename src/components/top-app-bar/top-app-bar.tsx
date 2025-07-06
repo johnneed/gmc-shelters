@@ -21,7 +21,7 @@ interface Props {
     onMenuClick?: () => void;
 }
 
-const navItems = [{text: "Shelters", link: "/"}, {text: "Map", link: "/map"}, {text: "About", link: "/about"}];
+const navItems = [{text: "Shelters", link: "/"}, {text: "Map", link: "/map"}];
 
 export default function TopAppBar(props: Props) {
     const navigate = useNavigate();
