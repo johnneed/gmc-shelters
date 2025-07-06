@@ -1,8 +1,8 @@
 import React from "react";
 import "./styles.css";
-import {Card} from "@mui/material";
+import {Box, Button, Card, CardActions, Typography} from "@mui/material";
 import {ViewShelterInfo} from "../view-shelter-info";
-import {EditShelterInfo} from "../edit-shelter-info"; // Grid version 2
+import EditIcon from "@mui/icons-material/Edit";
 
 
 interface ShelterInfoProps {
@@ -14,16 +14,16 @@ interface ShelterInfoProps {
 
 
 const ShelterCard: React.FC<ShelterInfoProps> = ({shelter, isSelected = false, activeShelter, onClick}) => {
-    const isEditing = Boolean(activeShelter && (activeShelter?.id === shelter.id));
+    // const isEditing = Boolean(activeShelter && (activeShelter?.id === shelter.id));
     return (
-        <Card className={isSelected ? "shelter-card_block is_selected" : "shelter-card_block"} onClick={onClick}>
-            {
-                isEditing ? (
-                    <EditShelterInfo shelter={activeShelter}/>
-                ) : (
-                    <ViewShelterInfo shelter={shelter}/>
-                )}
-        </Card>
+        <Box id={`shelter-card_${shelter.id}`} sx={{paddingTop: "0.1rem"}}>
+            <Card className={isSelected ? "shelter-card_block is_selected" : "shelter-card_block"} onClick={onClick}>
+                <ViewShelterInfo shelter={shelter}/>
+                <CardActions sx={{justifyContent: "flex-end"}}>
+                    <Button size="small"><EditIcon fontSize="inherit"/>{" "}<Typography>Edit</Typography></Button>
+                </CardActions>
+            </Card>
+        </Box>
     );
 };
 

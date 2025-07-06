@@ -92,7 +92,7 @@ const updateShelter = (shelter: Shelter) => {
             if (aka.id) {
                 updateAKA(aka);
             } else {
-                addAKA({...aka, shelterId: shelter.id});
+                addAKA({...aka, shelterId: Number(shelter.id)});
             }
         });
 
@@ -154,7 +154,7 @@ const readArchitectures = () => {
 
 const addAKA = (aka: AKA) => {
     try {
-        const queryString = `INSERT INTO shelter_akas (shelter_id, notes, name, created, updated) VALUES (` +
+        const queryString = "INSERT INTO shelter_akas (shelter_id, notes, name, created, updated) VALUES (" +
             `${aka.shelterId}, ${stringOrNull(aka.notes)}, ${stringOrNull(aka.name)},'${getNowString()}', '${getNowString()}')`;
         console.log("QUERY STRING FOR ADD AKA: ", queryString);
 

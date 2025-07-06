@@ -4,10 +4,14 @@ const makeNumber = (num: unknown, deflt?: number): number | undefined => {
 }
 
 const makeString = (str: unknown, deflt?: string): string | undefined => {
-    return (typeof str !== "string") ? deflt : str;
+    const strType = typeof str;
+    if (strType === "undefined" || strType === "object" || str === null) {
+        return deflt;
+    }
+    return String(str);
 }
 
-const makeBool = (bool: unknown, deflt = false): boolean | undefined => {
+const makeBool = (bool: unknown, defaultValue = false): boolean | undefined => {
     switch (typeof bool) {
         case "string":
             if (bool.toLowerCase() === "true") {
@@ -22,7 +26,7 @@ const makeBool = (bool: unknown, deflt = false): boolean | undefined => {
             if (bool.toLowerCase() === "off") {
                 return false;
             }
-            return deflt;
+            return defaultValue;
 
         case "number":
             switch (bool) {
@@ -31,12 +35,12 @@ const makeBool = (bool: unknown, deflt = false): boolean | undefined => {
                 case 0:
                     return false;
                 default:
-                    return deflt;
+                    return defaultValue;
             }
         case "boolean":
             return bool;
         default:
-            return deflt;
+            return defaultValue;
     }
 }
 

@@ -8,7 +8,7 @@ import {addAKA} from "../../store/slices/shelters.slice";
 
 interface AKAControlProps {
     akas?: AKA[];
-    shelterId?: number;
+    shelterId?: string;
 }
 
 const AKAControl: React.FC<AKAControlProps> = ({akas = []}: AKAControlProps) => {

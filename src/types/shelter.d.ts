@@ -1,5 +1,5 @@
 type Shelter = {
-    id?: number;
+    id: string;
     name?: string;
     startYear?: number;
     endYear?: number;

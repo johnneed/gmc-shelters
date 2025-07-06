@@ -7,9 +7,10 @@ const shelterFactory = (shelter?: any): Shelter => {
 
     if (!shelter) {
         return shelterFactory({})
-    }
+    };
+
     return {
-        id: makeNumber(shelter.id),
+        id: makeString(shelter.id),
         name: makeString(shelter.name),
         startYear: makeNumber(shelter.startYear || shelter.start_year),
         endYear: makeNumber(shelter.endYear || shelter.end_year),

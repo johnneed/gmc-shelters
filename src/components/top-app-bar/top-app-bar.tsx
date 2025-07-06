@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import {CssBaseline, IconButton, Toolbar, Button,alpha, InputBase, styled} from "@mui/material"
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import ClearIcon from '@mui/icons-material/Clear';
+import ClearIcon from "@mui/icons-material/Clear";
 import "./styles.css";
 import {useNavigate, useLocation} from "react-router-dom";
 import {setFilter, clearFilter, selectFilter} from "../../store/slices/ui.slice";
@@ -103,7 +103,6 @@ export default function TopAppBar(props: Props) {
         <Box sx={{display: "flex"}}>
             <CssBaseline/>
             <AppBar component="nav">
-
                 <Toolbar variant="dense">
                     <Box sx={{flexGrow: 0}}>
                         {navItems.map((item) => (
@@ -129,7 +128,7 @@ export default function TopAppBar(props: Props) {
                         />
                         <ClearFilterWrapper>
                             <IconButton
-                                size="large"
+                                size="small"
                                 edge="start"
                                 color="inherit"
                                 aria-label="open drawer"

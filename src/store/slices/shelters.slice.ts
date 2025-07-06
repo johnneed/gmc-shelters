@@ -130,7 +130,7 @@ export const sheltersSlice = createSlice({
             .addCase(deleteShelter.fulfilled, (_state, action) => {
                 const state = _state;
                 state.status = ERequestStatus.SUCCEEDED;
-                state.shelters = state.shelters.filter((u) => u.id !== action.meta.arg);
+                state.shelters = state.shelters.filter((u) => u.id !== action.meta.arg.id);
             })
             .addCase(deleteShelter.rejected, (_state) => {
                 _state.status = ERequestStatus.FAILED;
@@ -172,10 +172,12 @@ export const sheltersSlice = createSlice({
             .addCase(addAKA.pending, (_state) => {
                 const state = _state;
             })
-            .addCase(addAKA.fulfilled, (_state, action) => {
-                const state = _state;
-                state.shelters[state.activeShelter.id].akas = state.shelters[state.activeShelter.id].akas.concat(action.payload);
-            })
+            // TOODO: Fix this
+            // .addCase(addAKA.fulfilled, (_state, action) => {
+            //     const state = _state;
+            //     //state.shelters[state.activeShelter.id].akas = state.shelters[state.activeShelter.id].akas.concat(action.payload);
+            //     state.shelters = state.shelters;
+            // })
             .addCase(addAKA.rejected, (_state) => {
                 const state = _state;
             })
