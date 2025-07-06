@@ -6,33 +6,24 @@ import MailIcon from "@mui/icons-material/Mail";
 import InfoIcon from "@mui/icons-material/Info";
 import PhotoCameraIcon from "@mui/icons-material/PhotoCamera";
 import {useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 
 
 interface menuDrawerProps extends DrawerProps {
     open?: boolean;
+    toggleMenu?: (value?: boolean) => () => void;
 }
 
-const MenuDrawer = ({open, ...rest}: menuDrawerProps) => {
+const MenuDrawer = ({open, toggleMenu, ...rest}: menuDrawerProps) => {
 
 
-    const [isOpen, setIsOpen] = React.useState(false);
-    const toggleMenu = (value?: boolean) => () => {
-        if(value === undefined) {
-        setIsOpen(!isOpen);
-    } else {
-            setIsOpen(value);
-        }
-    };
-    // const navigate = useNavigate();
 
-    useEffect(() => {
-        setIsOpen(open);
-    },[open])
+    const navigate = useNavigate();
 
 
     return (
         <Drawer
-            open={isOpen}
+            open={open}
             {...rest}
             anchor={"right"}
         >
@@ -43,6 +34,7 @@ const MenuDrawer = ({open, ...rest}: menuDrawerProps) => {
                 <List>
                     <ListItem disablePadding onClick={() => {
                         console.log("About clicked");
+                        navigate("/about");
                     }}>
                         <ListItemButton>
                             <ListItemIcon>

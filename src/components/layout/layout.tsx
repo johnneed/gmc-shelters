@@ -13,22 +13,24 @@ interface LayoutProps {
 }
 
 
-
 const Layout: React.FC<LayoutProps> = ({children}: LayoutProps) => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const toggleMenu = () => {
-        console.log(isMenuOpen);
-        setIsMenuOpen(!isMenuOpen);
+    const toggleMenu = (value?: boolean) => () => {
+        if (value === undefined) {
+            setIsMenuOpen(!isMenuOpen);
+        } else {
+            setIsMenuOpen(value);
+        }
     };
 
     return (
         <Box className="app-container">
             <CssBaseline/>
-            <TopAppBar onMenuClick={toggleMenu}/>
-            <MenuDrawer open={isMenuOpen} onClose={toggleMenu}/>
-                <div className="main-window-container">
-                    {children}
-                </div>
+            <TopAppBar onMenuClick={toggleMenu()}/>
+            <MenuDrawer open={isMenuOpen} toggleMenu={toggleMenu} onClose={toggleMenu(false)}/>
+            <div className="main-window-container">
+                {children}
+            </div>
         </Box>
     );
 };
